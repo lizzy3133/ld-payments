@@ -26,6 +26,7 @@ let globalState = {
 };
 
 io.on("connection", (socket) => {
+
   console.log("User connected");
 
   socket.emit("state-update", globalState);
@@ -38,6 +39,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
+
 });
 
 app.get("/", (req, res) => {
@@ -45,7 +47,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create-checkout-session", async (req, res) => {
+
   try {
+
     const { service, amount } = req.body;
 
     const session = await stripe.checkout.sessions.create({
@@ -63,16 +67,22 @@ app.post("/create-checkout-session", async (req, res) => {
           quantity: 1
         }
       ],
-      success_url: "https://your-netlify-site.netlify.app/success",
-      cancel_url: "https://your-netlify-site.netlify.app/cancel"
+      success_url: "https://your-site.netlify.app/success",
+      cancel_url: "https://your-site.netlify.app/cancel"
     });
 
     res.json({ url: session.url });
 
   } catch (error) {
+
     console.log(error);
-    res.status(500).json({ error: "Checkout failed" });
+
+    res.status(500).json({
+      error: "Checkout failed"
+    });
+
   }
+
 });
 
 const PORT = process.env.PORT || 3000;
